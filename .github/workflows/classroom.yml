@@ -19,7 +19,7 @@ jobs:
       with:
         timeout: 15
         max-score: 30
-        setup-command: sudo -H pip install pandas
+        setup-command: pip install pandas
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:
