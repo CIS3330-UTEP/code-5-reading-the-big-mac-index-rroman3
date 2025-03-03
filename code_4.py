@@ -1,61 +1,25 @@
 import csv
 import pandas as pd
-
 big_mac_file = './big-mac-full-index.csv'
-
-def load_data():
-    df = pd.read_csv(big_mac_file)
-    df['year'] = df['date'].str[:4].astype(int)  # Ensure year is an integer
-    df['date'] = pd.to_datetime(df['date'])  # Convert date to datetime format
-    df = df[df['dollar_price'].notnull()]  # Remove rows where dollar_price is NaN
-    df['iso_a3'] = df['iso_a3'].str.lower()  # Normalize country codes to lowercase
-    return df
+df = pd.read_csv(big_mac_file)
 
 def get_big_mac_price_by_year(year, country_code):
-    df = load_data()
-    year = int(year)
-    country_code = country_code.lower()
-    df = df[(df['year'] == year) & (df['iso_a3'] == country_code)]
-    
-    if df.empty:
-        return None
-    
-    # If multiple prices exist for the same year, take the average
-    return round(df['dollar_price'].mean(), 2)
+    data = df[(df['date'].str.contains(str(year))) & (df['iso_a3'].str.lower() == country_code.lower())]
+    return round(data['dollar_price'].mean(), 2)
 
 def get_big_mac_price_by_country(country_code):
-    df = load_data()
-    country_code = country_code.lower()
-    
-    # Find the most recent year available for this country
-    country_df = df[df['iso_a3'] == country_code]
-    if country_df.empty:
-        return None
-    
-    latest_year = country_df['year'].max()
-    latest_df = country_df[country_df['year'] == latest_year]
-    
-    # Select the most recent record by sorting the date correctly
-    latest_df = latest_df.sort_values(by='date', ascending=False)
-    return round(latest_df.iloc[0]['dollar_price'], 2)
+    data = df[df['iso_a3'].str.lower() == country_code.lower()]
+    return round(data['dollar_price'].mean(), 2)
 
 def get_the_cheapest_big_mac_price_by_year(year):
-    df = load_data()
-    year = int(year)
-    df = df[df['year'] == year]
-    if df.empty:
-        return None
-    cheapest = df.nsmallest(1, 'dollar_price').iloc[0]  # Get the row with the lowest price
-    return f"{cheapest['name']}({cheapest['iso_a3'].upper()}): ${round(cheapest['dollar_price'], 2)}"
+    data = df[df['date'].str.contains(str(year))]
+    cheapest = data.loc[data['dollar_price'].idxmin()]
+    return f"{cheapest['name']}({cheapest['iso_a3']}): ${round(cheapest['dollar_price'], 2)}"
 
 def get_the_most_expensive_big_mac_price_by_year(year):
-    df = load_data()
-    year = int(year)
-    df = df[df['year'] == year]
-    if df.empty:
-        return None
-    most_expensive = df.nlargest(1, 'dollar_price').iloc[0]  # Get the row with the highest price
-    return f"{most_expensive['name']}({most_expensive['iso_a3'].upper()}): ${round(most_expensive['dollar_price'], 2)}"
+    data = df[df['date'].str.contains(str(year))]
+    expensive = data.loc[data['dollar_price'].idxmax()]
+    return f"{expensive['name']}({expensive['iso_a3']}): ${round(expensive['dollar_price'], 2)}"
 
 if __name__ == "__main__":
     while True:
