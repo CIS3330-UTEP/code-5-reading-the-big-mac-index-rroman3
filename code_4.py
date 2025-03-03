@@ -14,21 +14,23 @@ def get_big_mac_price_by_year(year, country_code):
     df = load_data()
     year = int(year)
     country_code = country_code.lower()
+    df = df[(df['year'] == year) & (df['iso_a3'] == country_code)]
     
-    # Debugging: Print available years and country codes before filtering
-    if df[(df['year'] == year) & (df['iso_a3'] == country_code)].empty:
-        print(f"No data found for {country_code.upper()} in {year}")
+    if df.empty:
         return None
     
-    df = df[(df['year'] == year) & (df['iso_a3'] == country_code)]
-    return round(df.iloc[0]['dollar_price'], 2)
+    # If multiple prices exist for the same year, take the average
+    return round(df['dollar_price'].mean(), 2)
 
 def get_big_mac_price_by_country(country_code):
     df = load_data()
     country_code = country_code.lower()
     df = df[df['iso_a3'] == country_code].sort_values(by='date', ascending=False)
+    
     if df.empty:
         return None
+    
+    # Ensure we get the latest available price
     return round(df.iloc[0]['dollar_price'], 2)
 
 def get_the_cheapest_big_mac_price_by_year(year):
