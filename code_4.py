@@ -6,6 +6,7 @@ big_mac_file = './big-mac-full-index.csv'
 def load_data():
     df = pd.read_csv(big_mac_file)
     df['year'] = df['date'].str[:4].astype(int)  # Ensure year is an integer
+    df['date'] = pd.to_datetime(df['date'])  # Convert date to datetime format
     df = df[df['dollar_price'].notnull()]  # Remove rows where dollar_price is NaN
     df['iso_a3'] = df['iso_a3'].str.lower()  # Normalize country codes to lowercase
     return df
@@ -34,7 +35,7 @@ def get_big_mac_price_by_country(country_code):
     latest_year = country_df['year'].max()
     latest_df = country_df[country_df['year'] == latest_year]
     
-    # Select the most recent record by date
+    # Select the most recent record by sorting the date correctly
     latest_df = latest_df.sort_values(by='date', ascending=False)
     return round(latest_df.iloc[0]['dollar_price'], 2)
 
