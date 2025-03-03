@@ -1,0 +1,28 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Main_test
+      id: main_test
+      uses: classroom-resources/autograding-python-grader@v1
+      with:
+        timeout: 15
+        max-score: 30
+        setup-command: pip install pandas
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        MAIN_TEST_RESULTS: "${{steps.main_test.outputs.result}}"
+      with:
+        runners: main_test
