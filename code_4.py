@@ -25,12 +25,13 @@ def get_big_mac_price_by_year(year, country_code):
 def get_big_mac_price_by_country(country_code):
     df = load_data()
     country_code = country_code.lower()
-    df = df[df['iso_a3'] == country_code].sort_values(by='date', ascending=False)
+    
+    # Sort by year and date to ensure we get the most recent Big Mac price
+    df = df[df['iso_a3'] == country_code].sort_values(by=['year', 'date'], ascending=[False, False])
     
     if df.empty:
         return None
     
-    # Ensure we get the latest available price
     return round(df.iloc[0]['dollar_price'], 2)
 
 def get_the_cheapest_big_mac_price_by_year(year):
