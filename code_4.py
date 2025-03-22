@@ -1,3 +1,4 @@
+import csv
 import pandas as pd
 big_mac_file = './big-mac-source-data.csv'
 
@@ -25,10 +26,7 @@ def get_the_cheapest_big_mac_price_by_year(year):
     df = df[df['year'] == str(year)]
     if df.empty:
         return None
-    cheapest = df.iloc[0]
-    for i, row in df.iterrows():
-        if row['dollar_price'] < cheapest['dollar_price']:
-            cheapest = row
+    cheapest = df.iloc[df['dollar_price'].idxmin()]
     return f"{cheapest['name']}({cheapest['iso_a3']}): ${round(cheapest['dollar_price'], 2)}"
     
 def get_the_most_expensive_big_mac_price_by_year(year):
@@ -36,12 +34,9 @@ def get_the_most_expensive_big_mac_price_by_year(year):
     df = df[df['year'] == str(year)]
     if df.empty:
         return None
-    expensive = df.iloc[0]
-    for i, row in df.iterrows():
-        if row['dollar_price'] > expensive['dollar_price']:
-            expensive = row
+    expensive = df.iloc[df['dollar_price'].idxmax()]
     return f"{expensive['name']}({expensive['iso_a3']}): ${round(expensive['dollar_price'], 2)}"
-    
+
 if __name__ == "__main__":
     while True:
         print("1. Get Big Mac price by year and country code")
@@ -55,22 +50,34 @@ if __name__ == "__main__":
             year = input("Enter year:(YYY): ")
             country_code = input("Enter country code (lowercase): ")    
             price = get_big_mac_price_by_year(year, country_code)
-            print(f"Big Mac price: ${price}" if price is not None else 'Data not found')
+            if price is not None:
+                print(f"Big Mac price: ${price}")
+            else:
+                print('Data not found')
 
         elif choice == '2':
             country_code = input("Enter country code (lowercase): ")
             price = get_big_mac_price_by_country(country_code)
-            print(f"Big Mac price: ${price}" if price is not None else 'Data not found')
+            if price is not None:
+                print(f"Big Mac price: ${price}")
+            else:
+                print('Data not found')
 
         elif choice == '3':
             year = input("Enter year:(YYY): ")
             result = get_the_cheapest_big_mac_price_by_year(year)
-            print(result if result is not None else 'Data not found')
+            if result is not None:
+                print(result)
+            else:
+                print('Data not found')
 
         elif choice == '4':
             year = input("Enter year:(YYY): ")
             result = get_the_most_expensive_big_mac_price_by_year(year)
-            print(result if result is not None else 'Data not found')
+            if result is not None:
+                print(result)
+            else:
+                print('Data not found')
 
         elif choice == '5':
             print("My pleasure! Goodbye!")
