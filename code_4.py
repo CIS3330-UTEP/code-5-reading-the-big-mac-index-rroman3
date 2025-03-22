@@ -1,4 +1,3 @@
-import csv
 import pandas as pd
 big_mac_file = './big-mac-source-data.csv'
 
@@ -56,13 +55,12 @@ if __name__ == "__main__":
             year = input("Enter year:(YYY): ")
             country_code = input("Enter country code (lowercase): ")    
             price = get_big_mac_price_by_year(year, country_code)
-            print(f"Big Mac price in {country_code.upper()} in {year}: ${price}" if price is not None else 'Data not found')
-        
+            print(f"Big Mac price: ${price}" if price is not None else 'Data not found')
 
         elif choice == '2':
             country_code = input("Enter country code (lowercase): ")
             price = get_big_mac_price_by_country(country_code)
-            print(f"Big Mac price in {country_code.upper()}: ${price}" if price is not None else 'Data not found')
+            print(f"Big Mac price: ${price}" if price is not None else 'Data not found')
 
         elif choice == '3':
             year = input("Enter year:(YYY): ")
