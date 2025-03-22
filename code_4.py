@@ -1,8 +1,6 @@
 import csv
 import pandas as pd
 big_mac_file = './big-mac-full-index.csv'
-def load_data():
-    return pd.read_csv(big_mac_file)
 
 def load_data():
     df = pd.read_csv(big_mac_file)
@@ -25,6 +23,7 @@ def get_big_mac_price_by_country(country_code):
 
 def get_the_cheapest_big_mac_price_by_year(year):
     df = load_data()
+    df['year'] = df['date'].str[:4]
     df = df[df['year'] == str(year)]
     if df.empty:
         return None
@@ -33,6 +32,7 @@ def get_the_cheapest_big_mac_price_by_year(year):
     
 def get_the_most_expensive_big_mac_price_by_year(year):
     df = load_data()
+    df['year'] = df['date'].str[:4]
     df = df[df['year'] == str(year)]
     if df.empty:
         return None
