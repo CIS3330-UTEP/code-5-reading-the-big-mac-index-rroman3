@@ -1,60 +1,83 @@
 import csv
 import pandas as pd
-big_mac_file = './big-mac-full-index.csv'
-df = pd.read_csv(big_mac_file)
+big_mac_file = './big-mac-source-data.csv'
 
-def get_big_mac_price_by_year(year, country_code):
-    data = df[(df['date'].str.contains(str(year))) & (df['iso_a3'].str.lower() == country_code.lower())]
-    return round(data['dollar_price'].mean(), 2)
+def load_data():
+    df = pd.read_csv(big_mac_file)
+    df['year'] = df['date'].str[:4]
+    return df
+
+def get_big_mac_price_by_year(year, country_code): 
+    df = load_data()
+    df = df[(df['year'] == str(year)) & (df['iso_a3'].str.lower() == country_code.lower())]
+    if df.empty:
+        return None
+    return round(df['dollar_price'].mean(), 2)
 
 def get_big_mac_price_by_country(country_code):
-    data = df[df['iso_a3'].str.lower() == country_code.lower()]
-    return round(data['dollar_price'].mean(), 2)
+    df = load_data()
+    df = df[df['iso_a3'].str.lower() == country_code.lower()]
+    if df.empty:
+        return None
+    return round(df['dollar_price'].mean(), 2)
 
 def get_the_cheapest_big_mac_price_by_year(year):
-    data = df[df['date'].str.contains(str(year))]
-    cheapest = data.loc[data['dollar_price'].idxmin()]
+    df = load_data()
+    df = df[df['year'] == str(year)]
+    if df.empty:
+        return None
+    cheapest = df.iloc[0]
+    for i, row in df.iterrows():
+        if row['dollar_price'] < cheapest['dollar_price']:
+            cheapest = row
     return f"{cheapest['name']}({cheapest['iso_a3']}): ${round(cheapest['dollar_price'], 2)}"
-
+    
 def get_the_most_expensive_big_mac_price_by_year(year):
-    data = df[df['date'].str.contains(str(year))]
-    expensive = data.loc[data['dollar_price'].idxmax()]
+    df = load_data()
+    df = df[df['year'] == str(year)]
+    if df.empty:
+        return None
+    expensive = df.iloc[0]
+    for i, row in df.iterrows():
+        if row['dollar_price'] > expensive['dollar_price']:
+            expensive = row
     return f"{expensive['name']}({expensive['iso_a3']}): ${round(expensive['dollar_price'], 2)}"
-
+    
 if __name__ == "__main__":
     while True:
-        print("\nChoose an option:")    
         print("1. Get Big Mac price by year and country code")
         print("2. Get Big Mac price by country code")
         print("3. Get the cheapest Big Mac price by year")
         print("4. Get the most expensive Big Mac price by year")
         print("5. Exit")
-        option = input("Enter your choice: ")
+        choice = input("Enter your choice: ")
 
-        if option == '1':
-            year = input("Enter year (YYYY): ")
-            country_code = input("Enter country code: ")
+        if choice == '1':
+            year = input("Enter year:(YYY): ")
+            country_code = input("Enter country code (lowercase): ")    
             price = get_big_mac_price_by_year(year, country_code)
-            print(f"Big Mac price: $[{price}]" if price else "No data found")
-
-        elif option == '2':
-            country_code = input("Enter country ISO code: ")
-            price = get_big_mac_price_by_country(country_code)
-            print(f"Big Mac price: $[{price}]" if price else "No data found")
-
-        elif option == '3':
-            year = input("Enter year (YYYY): ")
-            price = get_the_cheapest_big_mac_price_by_year(year)
-            print(f"The cheapest Big Mac price in {year}: {price}" if price else "No data found")
-
-        elif option == '4':
-            year = input("Enter year (YYYY): ")
-            price = get_the_most_expensive_big_mac_price_by_year(year)
-            print(f"The most expensive Big Mac price in {year}: {price}" if price else "No data found")
+            print(f"Big Mac price in {country_code.upper()} in {year}: ${price}" if price is not None else 'Data not found')
         
-        elif option == '5':
-            print("Exiting...")
-            break
 
+        elif choice == '2':
+            country_code = input("Enter country code (lowercase): ")
+            price = get_big_mac_price_by_country(country_code)
+            print(f"Big Mac price in {country_code.upper()}: ${price}" if price is not None else 'Data not found')
+
+        elif choice == '3':
+            year = input("Enter year:(YYY): ")
+            result = get_the_cheapest_big_mac_price_by_year(year)
+            print(result if result is not None else 'Data not found')
+
+        elif choice == '4':
+            year = input("Enter year:(YYY): ")
+            result = get_the_most_expensive_big_mac_price_by_year(year)
+            print(result if result is not None else 'Data not found')
+
+        elif choice == '5':
+            print("My pleasure! Goodbye!")
+            break
+        
         else:
-            print("Invalid option. Please try again.")
+            print("Invalid choice. Please try again.")
+
