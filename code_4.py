@@ -23,7 +23,6 @@ def get_big_mac_price_by_country(country_code):
 
 def get_the_cheapest_big_mac_price_by_year(year):
     df = load_data()
-    df['year'] = df['date'].str[:4]
     df = df[df['year'] == str(year)]
     if df.empty:
         return None
@@ -32,7 +31,6 @@ def get_the_cheapest_big_mac_price_by_year(year):
     
 def get_the_most_expensive_big_mac_price_by_year(year):
     df = load_data()
-    df['year'] = df['date'].str[:4]
     df = df[df['year'] == str(year)]
     if df.empty:
         return None
@@ -68,18 +66,12 @@ if __name__ == "__main__":
         elif choice == '3':
             year = input("Enter year:(YYY): ")
             result = get_the_cheapest_big_mac_price_by_year(year)
-            if result is not None:
-                print(result)
-            else:
-                print('Data not found')
+            print(f"The cheapest Big Mac price in {year}: {price}" if price else "No data found")
 
         elif choice == '4':
             year = input("Enter year:(YYY): ")
             result = get_the_most_expensive_big_mac_price_by_year(year)
-            if result is not None:
-                print(result)
-            else:
-                print('Data not found')
+            print(f"The most expensive Big Mac price in {year}: {price}" if price else "No data found")
 
         elif choice == '5':
             print("My pleasure! Goodbye!")
