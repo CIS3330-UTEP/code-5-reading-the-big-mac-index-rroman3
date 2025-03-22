@@ -1,6 +1,8 @@
 import csv
 import pandas as pd
 big_mac_file = './big-mac-full-index.csv'
+def load_data():
+    return pd.read_csv(big_mac_file)
 
 def load_data():
     df = pd.read_csv(big_mac_file)
