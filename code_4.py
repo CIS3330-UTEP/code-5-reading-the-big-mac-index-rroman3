@@ -33,33 +33,37 @@ def get_big_mac_price_by_country(country_code):
 
 def get_the_cheapest_big_mac_price_by_year(year):
     data = load_data()
+    year = str(year)
     lowest_price = None
-    result = ""
-    year = int(year)
+    name = ""
+    code = ""
     for row in data.values:
-        row_year = int(str(row[0])[:4])
-        if row_year == year:
-            if lowest_price is None or row[6] < lowest_price:
-                lowest_price = row[6]
-                result = f"{row[3]}({row[1]}): ${round(row[6], '.2f')}"
-    if result == "":
+        if str(row[0]).startswith(year):
+            price = row[6]
+            if lowest_price is None or price < lowest_price:
+                lowest_price = price
+                name = row[3]
+                code = row[1]
+    if lowest_price is None:
         return None
-    return result
+    return name + "(" + code + "): $" + str(round(lowest_price, 2))
 
 def get_the_most_expensive_big_mac_price_by_year(year):
     data = load_data()
+    year = str(year)
     highest_price = None
-    result = ""
-    year = int(year)
+    name = ""
+    code = ""
     for row in data.values:
-        row_year = int(str(row[0])[:4])
-        if row_year == year:
-            if highest_price is None or row[6] > highest_price:
-                highest_price = row[6]
-                result = f"{row[3]}({row[1]}): ${round(row[6], '.2f')}"
-    if result == "":
+        if str(row[0]).startswith(year):
+            price = row[6]
+            if highest_price is None or price > highest_price:
+                highest_price = price
+                name = row[3]
+                code = row[1]
+    if highest_price is None:
         return None
-    return result
+    return name + "(" + code + "): $" + str(round(highest_price, 2))
 
 if __name__ == "__main__":
     while True:
