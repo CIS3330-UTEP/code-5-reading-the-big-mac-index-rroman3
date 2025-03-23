@@ -13,8 +13,8 @@ def get_big_mac_price_by_year(year, country_code):
         year_str = str(row[0])
         if year_str.startswith(str(year)):
             if row[1].lower() == country_code.lower():
-                total += total + row[6]
-                count += count + 1
+                total += row[6]
+                count += 1
     if count == 0:
         return None
     return round(total / count, 2)            
@@ -25,8 +25,8 @@ def get_big_mac_price_by_country(country_code):
     count = 0
     for row in data.values:
         if row[1].lower() == country_code.lower():
-            total += total + row[6]
-            count += total + 1
+            total += row[6]
+            count += 1
     if count == 0:
         return None
     return round(total / count, 2)
@@ -40,7 +40,7 @@ def get_the_cheapest_big_mac_price_by_year(year):
         if year_str.startswith(str(year)):
             if lowest_price is None or row[6] < lowest_price:
                 lowest_price = row[6]
-                result = row[3] + "(" + row[1] + ")" ":$" + format(row[6], ".2f")
+                result = f"{row[3]}({row[1]}): ${round(row[6], '.2f')}"
     if result == "":
         return None
     return result
@@ -54,7 +54,7 @@ def get_the_most_expensive_big_mac_price_by_year(year):
         if year_str.startswith(str(year)):
             if highest_price is None or row[6] > highest_price:
                 highest_price = row[6]
-                result = row[3] + "(" + row[1] + ")" ":$" + format(row[6], ".2f")
+                result = f"{row[3]}({row[1]}): ${round(row[6], '.2f')}"
     if result == "":
         return None
     return result
