@@ -35,9 +35,10 @@ def get_the_cheapest_big_mac_price_by_year(year):
     data = load_data()
     lowest_price = None
     result = ""
+    year = int(year)
     for row in data.values:
-        year_str = str(row[0])
-        if year_str.startswith(str(year)):
+        row_year = int(str(row[0])[:4])
+        if row_year == year:
             if lowest_price is None or row[6] < lowest_price:
                 lowest_price = row[6]
                 result = f"{row[3]}({row[1]}): ${round(row[6], '.2f')}"
@@ -49,9 +50,10 @@ def get_the_most_expensive_big_mac_price_by_year(year):
     data = load_data()
     highest_price = None
     result = ""
+    year = int(year)
     for row in data.values:
-        year_str = str(row[0])
-        if year_str.startswith(str(year)):
+        row_year = int(str(row[0])[:4])
+        if row_year == year:
             if highest_price is None or row[6] > highest_price:
                 highest_price = row[6]
                 result = f"{row[3]}({row[1]}): ${round(row[6], '.2f')}"
