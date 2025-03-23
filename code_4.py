@@ -6,7 +6,7 @@ def load_data():
     return pd.read_csv(big_mac_file)
 
 def get_big_mac_price_by_year(year, country_code): 
-    df = load_data()
+    data = load_data()
     total = 0
     count = 0
     for row in data.values:
@@ -32,7 +32,7 @@ def get_big_mac_price_by_country(country_code):
     return round(total / count, 2)
 
 def get_the_cheapest_big_mac_price_by_year(year):
-    df = load_data()
+    data = load_data()
     lowest_price = None
     result = ""
     for row in data.values:
@@ -40,13 +40,13 @@ def get_the_cheapest_big_mac_price_by_year(year):
         if year_str.startswith(str(year)):
             if lowest_price is None or row[6] < lowest_price:
                 lowest_price = row[6]
-                result = f"{row[3]}({row[1]}): ${round(row[6], 2)}"
+                result = row[3] + "(" + row[1] + ")" ":$" + format(row[6], ".2f")
     if result == "":
         return None
     return result
 
 def get_the_most_expensive_big_mac_price_by_year(year):
-    df = load_data()
+    data = load_data()
     highest_price = None
     result = ""
     for row in data.values:
@@ -54,7 +54,7 @@ def get_the_most_expensive_big_mac_price_by_year(year):
         if year_str.startswith(str(year)):
             if highest_price is None or row[6] > highest_price:
                 highest_price = row[6]
-                result = f"{row[3]}({row[1]}): ${round(row[6], 2)}"
+                result = row[3] + "(" + row[1] + ")" ":$" + format(row[6], ".2f")
     if result == "":
         return None
     return result
