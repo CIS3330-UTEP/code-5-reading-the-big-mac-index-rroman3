@@ -3,39 +3,61 @@ import pandas as pd
 big_mac_file = './big-mac-full-index.csv'
 
 def load_data():
-    df = pd.read_csv(big_mac_file)
-    df['year'] = df['date'].str[:4]
-    return df
+    return pd.read_csv(big_mac_file)
 
 def get_big_mac_price_by_year(year, country_code): 
     df = load_data()
-    df = df[(df['year'] == str(year)) & (df['iso_a3'].str.lower() == country_code.lower())]
-    if df.empty:
+    total = 0
+    count = 0
+    for row in data.values:
+        year_str = str(row[0])
+        if year_str.startswith(str(year)):
+            if row[1].lower() == country_code.lower():
+                total += total + row[6]
+                count += count + 1
+    if count == 0:
         return None
-    return round(df['dollar_price'].mean(), 2)
+    return round(total / count, 2)            
 
 def get_big_mac_price_by_country(country_code):
-    df = load_data()
-    df = df[df['iso_a3'].str.lower() == country_code.lower()]
-    if df.empty:
+    data = load_data()
+    total = 0
+    count = 0
+    for row in data.values:
+        if row[1].lower() == country_code.lower():
+            total += total + row[6]
+            count += total + 1
+    if count == 0:
         return None
-    return round(df['dollar_price'].mean(), 2)
+    return round(total / count, 2)
 
 def get_the_cheapest_big_mac_price_by_year(year):
     df = load_data()
-    df = df[df['year'] == str(year)]
-    if df.empty:
+    lowest_price = None
+    result = ""
+    for row in data.values:
+        year_str = str(row[0])
+        if year_str.startswith(str(year)):
+            if lowest_price is None or row[6] < lowest_price:
+                lowest_price = row[6]
+                result = f"{row[3]}({row[1]}): ${round(row[6], 2)}"
+    if result == "":
         return None
-    cheapest = df.iloc[df['dollar_price'].idxmin()]
-    return f"{cheapest['name']}({cheapest['iso_a3']}): ${round(cheapest['dollar_price'], 2)}"
-    
+    return result
+
 def get_the_most_expensive_big_mac_price_by_year(year):
     df = load_data()
-    df = df[df['year'] == str(year)]
-    if df.empty:
+    highest_price = None
+    result = ""
+    for row in data.values:
+        year_str = str(row[0])
+        if year_str.startswith(str(year)):
+            if highest_price is None or row[6] > highest_price:
+                highest_price = row[6]
+                result = f"{row[3]}({row[1]}): ${round(row[6], 2)}"
+    if result == "":
         return None
-    expensive = df.iloc[df['dollar_price'].idxmax()]
-    return f"{expensive['name']}({expensive['iso_a3']}): ${round(expensive['dollar_price'], 2)}"
+    return result
 
 if __name__ == "__main__":
     while True:
@@ -53,7 +75,7 @@ if __name__ == "__main__":
             if price is not None:
                 print(f"Big Mac price: ${price}")
             else:
-                print('Data not found')
+                print("No data found")
 
         elif choice == '2':
             country_code = input("Enter country code (lowercase): ")
@@ -61,17 +83,23 @@ if __name__ == "__main__":
             if price is not None:
                 print(f"Big Mac price: ${price}")
             else:
-                print('Data not found')
+                print("No data found")
 
         elif choice == '3':
             year = input("Enter year:(YYY): ")
             result = get_the_cheapest_big_mac_price_by_year(year)
-            print(f"The cheapest Big Mac price in {year}: {price}" if price else "No data found")
+            if result is not None:
+                print(result)
+            else:
+                print("No data found")
 
         elif choice == '4':
             year = input("Enter year:(YYY): ")
             result = get_the_most_expensive_big_mac_price_by_year(year)
-            print(f"The most expensive Big Mac price in {year}: {price}" if price else "No data found")
+            if result is not None:
+                print(result)
+            else:
+                print("No data found")
 
         elif choice == '5':
             print("My pleasure! Goodbye!")
