@@ -33,37 +33,29 @@ def get_big_mac_price_by_country(country_code):
 
 def get_the_cheapest_big_mac_price_by_year(year):
     data = load_data()
-    year = str(year)
-    lowest_price = None
-    name = ""
-    code = ""
-    for row in data.values:
-        if str(row[0]).startswith(year):
-            price = row[6]
-            if lowest_price is None or price < lowest_price:
-                lowest_price = price
-                name = row[3]
-                code = row[1]
-    if lowest_price is None:
+    data['year'] = data['date'].str[:4]
+    filter = data[data['year'] == str(year)]
+    if len(filter) == 0:
         return None
-    return name + "(" + code + "): $" + str(round(lowest_price, 2))
+    min_price = filter['dollar_price'].min()
+    for i in range(len(filter)):
+        if filter.iloc[i]['dollar_price'] == min_price:
+            row = filter.iloc[i]
+            break
+    return f"{row['name']}({row['iso_a3']}): ${round(row['dollar_price'], 2)}"
 
 def get_the_most_expensive_big_mac_price_by_year(year):
     data = load_data()
-    year = str(year)
-    highest_price = None
-    name = ""
-    code = ""
-    for row in data.values:
-        if str(row[0]).startswith(year):
-            price = row[6]
-            if highest_price is None or price > highest_price:
-                highest_price = price
-                name = row[3]
-                code = row[1]
-    if highest_price is None:
+    data['year'] = data['date'].str[:4]
+    filter = data[data['year'] == str(year)]
+    if len(filter) == 0:
         return None
-    return name + "(" + code + "): $" + str(round(highest_price, 2))
+    max_price = filter['dollar_price'].max()
+    for i in range(len(filter)):
+        if filter.iloc[i]['dollar_price'] == max_price:
+            row = filter.iloc[i]
+            break
+    return f"{row['name']}({row['iso_a3']}): ${round(row['dollar_price'], 2)}"
 
 if __name__ == "__main__":
     while True:
